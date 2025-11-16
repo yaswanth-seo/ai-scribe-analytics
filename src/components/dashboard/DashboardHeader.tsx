@@ -1,4 +1,4 @@
-import { Calendar, ChevronDown } from "lucide-react";
+import { Calendar, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -7,6 +7,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGA4 } from "@/contexts/GA4Context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DashboardHeaderProps {
   dateRange: string;
@@ -21,6 +28,17 @@ const DashboardHeader = ({
   selectedProperty,
   onPropertyChange,
 }: DashboardHeaderProps) => {
+  const { isConnected, isLoading, properties, selectedPropertyId, connectGA4, disconnect, selectProperty } = useGA4();
+
+  const handleConnectGA4 = async () => {
+    await connectGA4();
+  };
+
+  const handlePropertyChange = (propertyId: string) => {
+    selectProperty(propertyId);
+    onPropertyChange(propertyId);
+  };
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-slide-up">
       <div>
@@ -33,16 +51,20 @@ const DashboardHeader = ({
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Select value={selectedProperty} onValueChange={onPropertyChange}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select property" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="example.com">example.com</SelectItem>
-            <SelectItem value="demo.app">demo.app</SelectItem>
-            <SelectItem value="test.io">test.io</SelectItem>
-          </SelectContent>
-        </Select>
+        {isConnected && properties.length > 0 && (
+          <Select value={selectedPropertyId || ""} onValueChange={handlePropertyChange}>
+            <SelectTrigger className="w-[240px]">
+              <SelectValue placeholder="Select GA4 property" />
+            </SelectTrigger>
+            <SelectContent>
+              {properties.map((property) => (
+                <SelectItem key={property.id} value={property.id}>
+                  {property.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         <Select value={dateRange} onValueChange={onDateRangeChange}>
           <SelectTrigger className="w-[140px]">
@@ -56,10 +78,36 @@ const DashboardHeader = ({
           </SelectContent>
         </Select>
 
-        <Button variant="outline" className="gap-2">
-          Connect GA4
-          <ChevronDown className="w-4 h-4" />
-        </Button>
+        {!isConnected ? (
+          <Button 
+            onClick={handleConnectGA4} 
+            disabled={isLoading}
+            className="gap-2"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              "Connect GA4"
+            )}
+          </Button>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                Connected
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={disconnect} className="text-destructive">
+                Disconnect
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

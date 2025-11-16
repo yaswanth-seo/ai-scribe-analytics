@@ -2,6 +2,7 @@ import { TrendingUp, TrendingDown, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import AIPlatformIcon from "./AIPlatformIcon";
 import { format, subDays } from "date-fns";
+import { PlatformCardData } from "@/utils/transformGA4Data";
 
 const platformsData = [
   {
@@ -44,6 +45,7 @@ const platformsData = [
 
 interface AIPlatformCardsProps {
   dateRange: string;
+  data: PlatformCardData[] | null;
 }
 
 const getComparisonText = (dateRange: string) => {
@@ -58,7 +60,10 @@ const getComparisonText = (dateRange: string) => {
   return `Compared to previous ${days} days (${format(periodStart, "MMM d")} - ${format(periodEnd, "MMM d")} vs ${format(previousPeriodStart, "MMM d")} - ${format(previousPeriodEnd, "MMM d")})`;
 };
 
-const AIPlatformCards = ({ dateRange }: AIPlatformCardsProps) => {
+const AIPlatformCards = ({ dateRange, data }: AIPlatformCardsProps) => {
+  // Use real data if available, otherwise use mock data
+  const displayData = data && data.length > 0 ? data : platformsData;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-border animate-fade-in">
@@ -67,7 +72,7 @@ const AIPlatformCards = ({ dateRange }: AIPlatformCardsProps) => {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
-      {platformsData.map((platform, index) => (
+      {displayData.map((platform, index) => (
         <Card
           key={platform.platform}
           className="p-6 transition-smooth hover:shadow-glow hover:-translate-y-1 cursor-pointer"
