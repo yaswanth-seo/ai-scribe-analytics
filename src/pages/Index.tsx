@@ -1,10 +1,8 @@
 import { useState } from "react";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import MetricsCards from "@/components/dashboard/MetricsCards";
+import AIPlatformCards from "@/components/dashboard/AIPlatformCards";
 import TrafficChart from "@/components/dashboard/TrafficChart";
-import AIPlatformsBreakdown from "@/components/dashboard/AIPlatformsBreakdown";
-import GeoDistribution from "@/components/dashboard/GeoDistribution";
-import TopPages from "@/components/dashboard/TopPages";
+import AISessionsTable from "@/components/dashboard/AISessionsTable";
 
 const Index = () => {
   const [dateRange, setDateRange] = useState("30d");
@@ -20,16 +18,11 @@ const Index = () => {
           onPropertyChange={setSelectedProperty}
         />
         
-        <MetricsCards />
+        <AIPlatformCards />
         
         <TrafficChart dateRange={dateRange} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AIPlatformsBreakdown />
-          <GeoDistribution />
-        </div>
-        
-        <TopPages />
+        <AISessionsTable />
       </div>
     </div>
   );
