@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import AIPlatformIcon from "./AIPlatformIcon";
+import { SessionData } from "@/utils/transformGA4Data";
 
 const AI_PLATFORMS = ["ChatGPT", "Gemini", "Claude", "Copilot", "Perplexity"];
 
@@ -153,11 +154,18 @@ const sessionsData = [
   },
 ];
 
-const AISessionsTable = () => {
+interface AISessionsTableProps {
+  data: SessionData[] | null;
+}
+
+const AISessionsTable = ({ data }: AISessionsTableProps) => {
   const [showAll, setShowAll] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(AI_PLATFORMS);
   
-  const filteredSessions = sessionsData.filter(session => 
+  // Use real data if available, otherwise use mock data
+  const allSessions = data && data.length > 0 ? data : sessionsData;
+  
+  const filteredSessions = allSessions.filter(session => 
     selectedPlatforms.includes(session.platform)
   );
   const displayedSessions = showAll ? filteredSessions : filteredSessions.slice(0, 8);
