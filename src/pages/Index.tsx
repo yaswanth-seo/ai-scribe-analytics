@@ -1,11 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import MetricsCards from "@/components/dashboard/MetricsCards";
+import TrafficChart from "@/components/dashboard/TrafficChart";
+import AIPlatformsBreakdown from "@/components/dashboard/AIPlatformsBreakdown";
+import GeoDistribution from "@/components/dashboard/GeoDistribution";
+import TopPages from "@/components/dashboard/TopPages";
 
 const Index = () => {
+  const [dateRange, setDateRange] = useState("30d");
+  const [selectedProperty, setSelectedProperty] = useState("example.com");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        <DashboardHeader
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+          selectedProperty={selectedProperty}
+          onPropertyChange={setSelectedProperty}
+        />
+        
+        <MetricsCards />
+        
+        <TrafficChart dateRange={dateRange} />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AIPlatformsBreakdown />
+          <GeoDistribution />
+        </div>
+        
+        <TopPages />
       </div>
     </div>
   );
