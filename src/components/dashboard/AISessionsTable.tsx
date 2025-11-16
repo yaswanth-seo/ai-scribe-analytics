@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import AIPlatformIcon from "./AIPlatformIcon";
+
+const AI_PLATFORMS = ["ChatGPT", "Gemini", "Claude", "Copilot", "Perplexity"];
 
 const sessionsData = [
   {
@@ -152,12 +155,39 @@ const sessionsData = [
 
 const AISessionsTable = () => {
   const [showAll, setShowAll] = useState(false);
-  const displayedSessions = showAll ? sessionsData : sessionsData.slice(0, 8);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(AI_PLATFORMS);
+  
+  const filteredSessions = sessionsData.filter(session => 
+    selectedPlatforms.includes(session.platform)
+  );
+  const displayedSessions = showAll ? filteredSessions : filteredSessions.slice(0, 8);
 
   return (
     <Card className="animate-slide-up">
-      <CardHeader>
+      <CardHeader className="space-y-4">
         <CardTitle>AI Platform Activity</CardTitle>
+        <ToggleGroup 
+          type="multiple" 
+          value={selectedPlatforms}
+          onValueChange={(value) => {
+            if (value.length > 0) {
+              setSelectedPlatforms(value);
+            }
+          }}
+          className="justify-start flex-wrap"
+        >
+          {AI_PLATFORMS.map((platform) => (
+            <ToggleGroupItem 
+              key={platform} 
+              value={platform}
+              aria-label={`Toggle ${platform}`}
+              className="gap-2"
+            >
+              <AIPlatformIcon platform={platform} className="w-4 h-4" />
+              {platform}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -189,14 +219,25 @@ const AISessionsTable = () => {
             </tbody>
           </table>
         </div>
-        <div className="p-4">
-          <Button 
-            onClick={() => setShowAll(!showAll)} 
-            className="w-full bg-foreground text-background hover:bg-foreground/90"
-          >
-            {showAll ? "Show Less" : "View More"}
-          </Button>
-        </div>
+        {filteredSessions.length > 0 ? (
+          <div className="p-4 space-y-2">
+            <p className="text-sm text-muted-foreground text-center">
+              Showing {displayedSessions.length} of {filteredSessions.length} sessions
+            </p>
+            {filteredSessions.length > 8 && (
+              <Button 
+                onClick={() => setShowAll(!showAll)} 
+                className="w-full bg-foreground text-background hover:bg-foreground/90"
+              >
+                {showAll ? "Show Less" : "View More"}
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-muted-foreground">
+            No sessions match the selected filters
+          </div>
+        )}
       </CardContent>
     </Card>
   );

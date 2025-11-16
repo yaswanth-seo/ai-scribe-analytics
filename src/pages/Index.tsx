@@ -18,7 +18,7 @@ const Index = () => {
           onPropertyChange={setSelectedProperty}
         />
         
-        <AIPlatformCards />
+        <AIPlatformCards dateRange={dateRange} />
         
         <TrafficChart dateRange={dateRange} />
         

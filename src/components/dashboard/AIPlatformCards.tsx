@@ -1,6 +1,7 @@
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import AIPlatformIcon from "./AIPlatformIcon";
+import { format, subDays } from "date-fns";
 
 const platformsData = [
   {
@@ -41,9 +42,31 @@ const platformsData = [
   },
 ];
 
-const AIPlatformCards = () => {
+interface AIPlatformCardsProps {
+  dateRange: string;
+}
+
+const getComparisonText = (dateRange: string) => {
+  const today = new Date();
+  const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
+  
+  const periodEnd = today;
+  const periodStart = subDays(today, days);
+  const previousPeriodEnd = subDays(periodStart, 1);
+  const previousPeriodStart = subDays(previousPeriodEnd, days);
+  
+  return `Compared to previous ${days} days (${format(periodStart, "MMM d")} - ${format(periodEnd, "MMM d")} vs ${format(previousPeriodStart, "MMM d")} - ${format(previousPeriodEnd, "MMM d")})`;
+};
+
+const AIPlatformCards = ({ dateRange }: AIPlatformCardsProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-border animate-fade-in">
+        <Info className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <p className="text-sm text-muted-foreground">{getComparisonText(dateRange)}</p>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
       {platformsData.map((platform, index) => (
         <Card
           key={platform.platform}
@@ -75,6 +98,7 @@ const AIPlatformCards = () => {
           </div>
         </Card>
       ))}
+      </div>
     </div>
   );
 };
