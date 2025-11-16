@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const generateMockData = (days: number) => {
@@ -30,6 +32,15 @@ interface TrafficChartProps {
 const TrafficChart = ({ dateRange }: TrafficChartProps) => {
   const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
   const data = generateMockData(days);
+  const [visiblePlatforms, setVisiblePlatforms] = useState<string[]>(["chatgpt"]);
+
+  const togglePlatform = (platform: string) => {
+    setVisiblePlatforms(prev =>
+      prev.includes(platform)
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
 
   return (
     <Card className="animate-slide-up shadow-glow">
@@ -38,6 +49,28 @@ const TrafficChart = ({ dateRange }: TrafficChartProps) => {
         <CardDescription>
           Visitor trends across different AI platforms over time
         </CardDescription>
+        <div className="flex flex-wrap gap-2 mt-4">
+          <ToggleGroup type="multiple" value={visiblePlatforms} onValueChange={setVisiblePlatforms}>
+            <ToggleGroupItem value="chatgpt" className="data-[state=on]:bg-[hsl(var(--chart-chatgpt))] data-[state=on]:text-white">
+              ChatGPT
+            </ToggleGroupItem>
+            <ToggleGroupItem value="gemini" className="data-[state=on]:bg-[hsl(var(--chart-gemini))] data-[state=on]:text-white">
+              Gemini
+            </ToggleGroupItem>
+            <ToggleGroupItem value="claude" className="data-[state=on]:bg-[hsl(var(--chart-claude))] data-[state=on]:text-white">
+              Claude
+            </ToggleGroupItem>
+            <ToggleGroupItem value="copilot" className="data-[state=on]:bg-[hsl(var(--chart-copilot))] data-[state=on]:text-white">
+              Copilot
+            </ToggleGroupItem>
+            <ToggleGroupItem value="perplexity" className="data-[state=on]:bg-[hsl(var(--chart-perplexity))] data-[state=on]:text-white">
+              Perplexity
+            </ToggleGroupItem>
+            <ToggleGroupItem value="other" className="data-[state=on]:bg-[hsl(var(--chart-other))] data-[state=on]:text-white">
+              Other AI
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
@@ -60,55 +93,67 @@ const TrafficChart = ({ dateRange }: TrafficChartProps) => {
               }}
             />
             <Legend />
-            <Line
-              type="monotone"
-              dataKey="chatgpt"
-              stroke="hsl(var(--chart-chatgpt))"
-              strokeWidth={3}
-              name="ChatGPT"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="gemini"
-              stroke="hsl(var(--chart-gemini))"
-              strokeWidth={3}
-              name="Gemini"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="claude"
-              stroke="hsl(var(--chart-claude))"
-              strokeWidth={3}
-              name="Claude"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="copilot"
-              stroke="hsl(var(--chart-copilot))"
-              strokeWidth={3}
-              name="Copilot"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="perplexity"
-              stroke="hsl(var(--chart-perplexity))"
-              strokeWidth={3}
-              name="Perplexity"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="other"
-              stroke="hsl(var(--chart-other))"
-              strokeWidth={1.5}
-              name="Other AI"
-              dot={false}
-              opacity={0.5}
-            />
+            {visiblePlatforms.includes("chatgpt") && (
+              <Line
+                type="monotone"
+                dataKey="chatgpt"
+                stroke="hsl(var(--chart-chatgpt))"
+                strokeWidth={3}
+                name="ChatGPT"
+                dot={false}
+              />
+            )}
+            {visiblePlatforms.includes("gemini") && (
+              <Line
+                type="monotone"
+                dataKey="gemini"
+                stroke="hsl(var(--chart-gemini))"
+                strokeWidth={3}
+                name="Gemini"
+                dot={false}
+              />
+            )}
+            {visiblePlatforms.includes("claude") && (
+              <Line
+                type="monotone"
+                dataKey="claude"
+                stroke="hsl(var(--chart-claude))"
+                strokeWidth={3}
+                name="Claude"
+                dot={false}
+              />
+            )}
+            {visiblePlatforms.includes("copilot") && (
+              <Line
+                type="monotone"
+                dataKey="copilot"
+                stroke="hsl(var(--chart-copilot))"
+                strokeWidth={3}
+                name="Copilot"
+                dot={false}
+              />
+            )}
+            {visiblePlatforms.includes("perplexity") && (
+              <Line
+                type="monotone"
+                dataKey="perplexity"
+                stroke="hsl(var(--chart-perplexity))"
+                strokeWidth={3}
+                name="Perplexity"
+                dot={false}
+              />
+            )}
+            {visiblePlatforms.includes("other") && (
+              <Line
+                type="monotone"
+                dataKey="other"
+                stroke="hsl(var(--chart-other))"
+                strokeWidth={1.5}
+                name="Other AI"
+                dot={false}
+                opacity={0.5}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </CardContent>
