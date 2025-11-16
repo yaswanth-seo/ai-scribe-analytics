@@ -1,7 +1,7 @@
 export const GA4_CONFIG = {
   CLIENT_ID: "481580861178-6l45lh9e6tnvbbubki302o71pmetnuhe.apps.googleusercontent.com",
   CLIENT_SECRET: "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",
-  REDIRECT_URI: typeof window !== 'undefined' ? window.location.origin + "/oauth/callback" : "",
+  REDIRECT_URI: "http://localhost:8080/",
   SCOPES: ["https://www.googleapis.com/auth/analytics.readonly"],
   AUTH_URL: "https://accounts.google.com/o/oauth2/v2/auth",
   TOKEN_URL: "https://oauth2.googleapis.com/token",

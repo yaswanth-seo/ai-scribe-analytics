@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "sonner";
 import {
-  initiateOAuthFlow,
+  generateOAuthUrl,
+  extractCodeFromUrl,
   fetchAccessToken,
   listGA4Properties,
   fetchGA4Data,
@@ -18,9 +19,13 @@ interface GA4ContextType {
   ga4Data: any | null;
   isLoading: boolean;
   error: string | null;
+  showOAuthDialog: boolean;
+  authUrl: string;
   
   // Actions
-  connectGA4: () => Promise<void>;
+  connectGA4: () => void;
+  handleOAuthCallback: (redirectUrl: string) => Promise<void>;
+  closeOAuthDialog: () => void;
   selectProperty: (propertyId: string) => void;
   fetchData: (dateRange: string) => Promise<void>;
   disconnect: () => void;
@@ -49,6 +54,8 @@ export const GA4Provider = ({ children }: { children: ReactNode }) => {
   const [ga4Data, setGa4Data] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showOAuthDialog, setShowOAuthDialog] = useState(false);
+  const [authUrl, setAuthUrl] = useState("");
 
   const isConnected = !!accessToken;
 
@@ -93,13 +100,24 @@ export const GA4Provider = ({ children }: { children: ReactNode }) => {
     return accessToken;
   };
 
-  // Connect to GA4
-  const connectGA4 = async () => {
+  // Connect to GA4 - Opens dialog with OAuth URL
+  const connectGA4 = () => {
+    setError(null);
+    const url = generateOAuthUrl();
+    setAuthUrl(url);
+    setShowOAuthDialog(true);
+  };
+
+  // Handle pasted redirect URL
+  const handleOAuthCallback = async (redirectUrl: string) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const code = await initiateOAuthFlow();
+      // Extract code from pasted URL
+      const code = extractCodeFromUrl(redirectUrl);
+      
+      // Exchange for tokens
       const tokenResponse = await fetchAccessToken(code);
       
       storeTokens(
@@ -108,9 +126,11 @@ export const GA4Provider = ({ children }: { children: ReactNode }) => {
         tokenResponse.expires_in
       );
       
+      // Fetch properties
       const props = await listGA4Properties(tokenResponse.access_token);
       setProperties(props);
       
+      setShowOAuthDialog(false);
       toast.success("Successfully connected to Google Analytics!");
     } catch (err: any) {
       const errorMsg = err.message || "Failed to connect to Google Analytics";
@@ -120,6 +140,12 @@ export const GA4Provider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Close OAuth dialog
+  const closeOAuthDialog = () => {
+    setShowOAuthDialog(false);
+    setIsLoading(false);
   };
 
   // Select property
@@ -197,7 +223,11 @@ export const GA4Provider = ({ children }: { children: ReactNode }) => {
         ga4Data,
         isLoading,
         error,
+        showOAuthDialog,
+        authUrl,
         connectGA4,
+        handleOAuthCallback,
+        closeOAuthDialog,
         selectProperty,
         fetchData,
         disconnect,

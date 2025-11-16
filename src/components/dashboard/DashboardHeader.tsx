@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { OAuthDialog } from "./OAuthDialog";
 
 interface DashboardHeaderProps {
   dateRange: string;
@@ -28,10 +29,22 @@ const DashboardHeader = ({
   selectedProperty,
   onPropertyChange,
 }: DashboardHeaderProps) => {
-  const { isConnected, isLoading, properties, selectedPropertyId, connectGA4, disconnect, selectProperty } = useGA4();
+  const { 
+    isConnected, 
+    isLoading, 
+    properties, 
+    selectedPropertyId, 
+    connectGA4, 
+    disconnect, 
+    selectProperty,
+    showOAuthDialog,
+    authUrl,
+    handleOAuthCallback,
+    closeOAuthDialog
+  } = useGA4();
 
-  const handleConnectGA4 = async () => {
-    await connectGA4();
+  const handleConnectGA4 = () => {
+    connectGA4();
   };
 
   const handlePropertyChange = (propertyId: string) => {
@@ -109,6 +122,14 @@ const DashboardHeader = ({
           </DropdownMenu>
         )}
       </div>
+
+      <OAuthDialog
+        open={showOAuthDialog}
+        onClose={closeOAuthDialog}
+        onSuccess={handleOAuthCallback}
+        authUrl={authUrl}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
