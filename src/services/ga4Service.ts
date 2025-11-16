@@ -143,8 +143,8 @@ export const fetchGA4Data = async (
           { startDate: `${days}daysAgo`, endDate: "yesterday" },
         ],
         dimensions: [
-          { name: "sessionMedium" },
-          { name: "sessionSource" },
+          { name: "firstUserMedium" },
+          { name: "firstUserSource" },
           { name: "date" },
           { name: "pagePath" },
           { name: "country" },
