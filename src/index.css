@@ -39,13 +39,13 @@
 
     --radius: 0.75rem;
 
-    /* Chart colors */
-    --chart-ai: 210 100% 50%;
-    --chart-organic-search: 142 76% 36%;
-    --chart-organic-social: 270 70% 60%;
-    --chart-referral: 25 95% 53%;
-    --chart-direct: 220 10% 45%;
-    --chart-other: 0 0% 60%;
+    /* Chart colors for AI platforms */
+    --chart-chatgpt: 210 100% 50%;
+    --chart-gemini: 270 70% 60%;
+    --chart-claude: 25 95% 53%;
+    --chart-copilot: 200 80% 55%;
+    --chart-perplexity: 142 76% 36%;
+    --chart-other: 220 10% 45%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%), hsl(270 70% 60%));
@@ -104,13 +104,13 @@
     --input: 220 15% 20%;
     --ring: 210 100% 55%;
 
-    /* Chart colors for dark mode */
-    --chart-ai: 210 100% 60%;
-    --chart-organic-search: 142 76% 45%;
-    --chart-organic-social: 270 70% 65%;
-    --chart-referral: 25 95% 58%;
-    --chart-direct: 220 10% 55%;
-    --chart-other: 0 0% 50%;
+    /* Chart colors for AI platforms in dark mode */
+    --chart-chatgpt: 210 100% 60%;
+    --chart-gemini: 270 70% 65%;
+    --chart-claude: 25 95% 58%;
+    --chart-copilot: 200 80% 60%;
+    --chart-perplexity: 142 76% 45%;
+    --chart-other: 220 10% 55%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 100% 55%), hsl(270 70% 65%));

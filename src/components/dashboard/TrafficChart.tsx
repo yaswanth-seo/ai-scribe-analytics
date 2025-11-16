@@ -12,11 +12,12 @@ const generateMockData = (days: number) => {
     
     data.push({
       date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      ai: Math.floor(100 + Math.random() * 200),
-      organicSearch: Math.floor(300 + Math.random() * 400),
-      organicSocial: Math.floor(150 + Math.random() * 250),
-      referral: Math.floor(50 + Math.random() * 150),
-      direct: Math.floor(100 + Math.random() * 200),
+      chatgpt: Math.floor(150 + Math.random() * 300),
+      gemini: Math.floor(100 + Math.random() * 200),
+      claude: Math.floor(80 + Math.random() * 150),
+      copilot: Math.floor(60 + Math.random() * 120),
+      perplexity: Math.floor(40 + Math.random() * 100),
+      other: Math.floor(50 + Math.random() * 100),
     });
   }
   return data;
@@ -33,9 +34,9 @@ const TrafficChart = ({ dateRange }: TrafficChartProps) => {
   return (
     <Card className="animate-slide-up shadow-glow">
       <CardHeader>
-        <CardTitle>Traffic Overview</CardTitle>
+        <CardTitle>AI Platform Traffic Trends</CardTitle>
         <CardDescription>
-          Session breakdown by traffic source over time
+          Visitor trends across different AI platforms over time
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -61,43 +62,52 @@ const TrafficChart = ({ dateRange }: TrafficChartProps) => {
             <Legend />
             <Line
               type="monotone"
-              dataKey="ai"
-              stroke="hsl(var(--chart-ai))"
-              strokeWidth={2}
-              name="AI Chats"
+              dataKey="chatgpt"
+              stroke="hsl(var(--chart-chatgpt))"
+              strokeWidth={3}
+              name="ChatGPT"
               dot={false}
             />
             <Line
               type="monotone"
-              dataKey="organicSearch"
-              stroke="hsl(var(--chart-organic-search))"
-              strokeWidth={2}
-              name="Organic Search"
+              dataKey="gemini"
+              stroke="hsl(var(--chart-gemini))"
+              strokeWidth={3}
+              name="Gemini"
               dot={false}
             />
             <Line
               type="monotone"
-              dataKey="organicSocial"
-              stroke="hsl(var(--chart-organic-social))"
-              strokeWidth={2}
-              name="Organic Social"
+              dataKey="claude"
+              stroke="hsl(var(--chart-claude))"
+              strokeWidth={3}
+              name="Claude"
               dot={false}
             />
             <Line
               type="monotone"
-              dataKey="referral"
-              stroke="hsl(var(--chart-referral))"
-              strokeWidth={2}
-              name="Referral"
+              dataKey="copilot"
+              stroke="hsl(var(--chart-copilot))"
+              strokeWidth={3}
+              name="Copilot"
               dot={false}
             />
             <Line
               type="monotone"
-              dataKey="direct"
-              stroke="hsl(var(--chart-direct))"
-              strokeWidth={2}
-              name="Direct"
+              dataKey="perplexity"
+              stroke="hsl(var(--chart-perplexity))"
+              strokeWidth={3}
+              name="Perplexity"
               dot={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="other"
+              stroke="hsl(var(--chart-other))"
+              strokeWidth={1.5}
+              name="Other AI"
+              dot={false}
+              opacity={0.5}
             />
           </LineChart>
         </ResponsiveContainer>
