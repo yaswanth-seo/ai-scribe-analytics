@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import AIPlatformIcon from "./AIPlatformIcon";
@@ -51,9 +52,108 @@ const sessionsData = [
     timestamp: "12 Jun, 10AM",
     location: "NY, USA",
   },
+  {
+    platform: "Gemini",
+    pagePath: "/features/analytics",
+    timestamp: "12 Jun, 9AM",
+    location: "London, UK",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/blog/ai-trends-2024",
+    timestamp: "11 Jun, 11PM",
+    location: "Toronto, Canada",
+  },
+  {
+    platform: "Claude",
+    pagePath: "/products/enterprise",
+    timestamp: "11 Jun, 10PM",
+    location: "Seattle, WA",
+  },
+  {
+    platform: "Copilot",
+    pagePath: "/docs/getting-started",
+    timestamp: "11 Jun, 9PM",
+    location: "Austin, TX",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/",
+    timestamp: "11 Jun, 8PM",
+    location: "Berlin, Germany",
+  },
+  {
+    platform: "Perplexity",
+    pagePath: "/features/integrations",
+    timestamp: "11 Jun, 7PM",
+    location: "Sydney, Australia",
+  },
+  {
+    platform: "Gemini",
+    pagePath: "/pricing/teams",
+    timestamp: "11 Jun, 6PM",
+    location: "Mumbai, India",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/blog/product-updates",
+    timestamp: "11 Jun, 5PM",
+    location: "San Francisco, CA",
+  },
+  {
+    platform: "Claude",
+    pagePath: "/about-us/careers",
+    timestamp: "11 Jun, 4PM",
+    location: "Boston, MA",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/docs/api-reference",
+    timestamp: "11 Jun, 3PM",
+    location: "Chicago, IL",
+  },
+  {
+    platform: "Copilot",
+    pagePath: "/products/premium",
+    timestamp: "11 Jun, 2PM",
+    location: "Denver, CO",
+  },
+  {
+    platform: "Gemini",
+    pagePath: "/features/security",
+    timestamp: "11 Jun, 1PM",
+    location: "Paris, France",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/blog/case-studies",
+    timestamp: "11 Jun, 12PM",
+    location: "Atlanta, GA",
+  },
+  {
+    platform: "Perplexity",
+    pagePath: "/pricing/enterprise",
+    timestamp: "11 Jun, 11AM",
+    location: "Tokyo, Japan",
+  },
+  {
+    platform: "Claude",
+    pagePath: "/features/collaboration",
+    timestamp: "11 Jun, 10AM",
+    location: "Amsterdam, Netherlands",
+  },
+  {
+    platform: "ChatGPT",
+    pagePath: "/docs/tutorials",
+    timestamp: "11 Jun, 9AM",
+    location: "Portland, OR",
+  },
 ];
 
 const AISessionsTable = () => {
+  const [showAll, setShowAll] = useState(false);
+  const displayedSessions = showAll ? sessionsData : sessionsData.slice(0, 8);
+
   return (
     <Card className="animate-slide-up">
       <CardHeader>
@@ -71,7 +171,7 @@ const AISessionsTable = () => {
               </tr>
             </thead>
             <tbody>
-              {sessionsData.map((session, index) => (
+              {displayedSessions.map((session, index) => (
                 <tr key={index} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -90,8 +190,11 @@ const AISessionsTable = () => {
           </table>
         </div>
         <div className="p-4">
-          <Button className="w-full bg-foreground text-background hover:bg-foreground/90">
-            View More
+          <Button 
+            onClick={() => setShowAll(!showAll)} 
+            className="w-full bg-foreground text-background hover:bg-foreground/90"
+          >
+            {showAll ? "Show Less" : "View More"}
           </Button>
         </div>
       </CardContent>
