@@ -31,6 +31,10 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -56,6 +60,14 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        chart: {
+          ai: "hsl(var(--chart-ai))",
+          "organic-search": "hsl(var(--chart-organic-search))",
+          "organic-social": "hsl(var(--chart-organic-social))",
+          referral: "hsl(var(--chart-referral))",
+          direct: "hsl(var(--chart-direct))",
+          other: "hsl(var(--chart-other))",
         },
       },
       borderRadius: {
