@@ -13,65 +13,42 @@ export interface TokenResponse {
   token_type: string;
 }
 
-// OAuth Flow
-export const initiateOAuthFlow = (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const params = new URLSearchParams({
-      client_id: GA4_CONFIG.CLIENT_ID,
-      redirect_uri: GA4_CONFIG.REDIRECT_URI,
-      response_type: "code",
-      scope: GA4_CONFIG.SCOPES.join(" "),
-      access_type: "offline",
-      prompt: "consent",
-    });
-    
-    const authUrl = `${GA4_CONFIG.AUTH_URL}?${params}`;
-    const popup = window.open(authUrl, "GA4 OAuth", "width=600,height=700");
-    
-    if (!popup) {
-      reject(new Error("Popup blocked. Please allow popups for this site."));
-      return;
-    }
-
-    // Listen for OAuth callback
-    const checkPopup = setInterval(() => {
-      try {
-        if (popup.closed) {
-          clearInterval(checkPopup);
-          reject(new Error("OAuth popup closed"));
-          return;
-        }
-        
-        if (popup.location.href.includes(GA4_CONFIG.REDIRECT_URI)) {
-          const url = new URL(popup.location.href);
-          const code = url.searchParams.get("code");
-          const error = url.searchParams.get("error");
-          
-          popup.close();
-          clearInterval(checkPopup);
-          
-          if (error) {
-            reject(new Error(`OAuth error: ${error}`));
-          } else if (code) {
-            resolve(code);
-          } else {
-            reject(new Error("No authorization code received"));
-          }
-        }
-      } catch (e) {
-        // Cross-origin error before redirect - expected
-      }
-    }, 500);
-    
-    // Timeout after 5 minutes
-    setTimeout(() => {
-      clearInterval(checkPopup);
-      if (!popup.closed) {
-        popup.close();
-      }
-      reject(new Error("OAuth timeout"));
-    }, 300000);
+// Generate OAuth URL for manual authentication
+export const generateOAuthUrl = (): string => {
+  const params = new URLSearchParams({
+    client_id: GA4_CONFIG.CLIENT_ID,
+    redirect_uri: GA4_CONFIG.REDIRECT_URI,
+    response_type: "code",
+    scope: GA4_CONFIG.SCOPES.join(" "),
+    access_type: "offline",
+    prompt: "consent",
   });
+  
+  return `${GA4_CONFIG.AUTH_URL}?${params}`;
+};
+
+// Extract authorization code from pasted redirect URL
+export const extractCodeFromUrl = (redirectUrl: string): string => {
+  try {
+    const url = new URL(redirectUrl);
+    const code = url.searchParams.get("code");
+    const error = url.searchParams.get("error");
+    
+    if (error) {
+      throw new Error(`OAuth error: ${error}`);
+    }
+    
+    if (!code) {
+      throw new Error("No authorization code found in URL");
+    }
+    
+    return code;
+  } catch (err) {
+    if (err instanceof Error && err.message.startsWith("OAuth error")) {
+      throw err;
+    }
+    throw new Error("Invalid redirect URL. Please paste the complete URL from your browser.");
+  }
 };
 
 // Exchange code for tokens
