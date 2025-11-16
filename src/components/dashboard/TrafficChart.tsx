@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { ChartDataPoint } from "@/utils/transformGA4Data";
 
 const generateMockData = (days: number) => {
   const data = [];
@@ -28,13 +27,11 @@ const generateMockData = (days: number) => {
 
 interface TrafficChartProps {
   dateRange: string;
-  data: ChartDataPoint[] | null;
 }
 
-const TrafficChart = ({ dateRange, data }: TrafficChartProps) => {
+const TrafficChart = ({ dateRange }: TrafficChartProps) => {
   const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
-  const mockData = generateMockData(days);
-  const displayData = data && data.length > 0 ? data : mockData;
+  const data = generateMockData(days);
   const [visiblePlatforms, setVisiblePlatforms] = useState<string[]>(["chatgpt"]);
 
   const togglePlatform = (platform: string) => {
@@ -77,7 +74,7 @@ const TrafficChart = ({ dateRange, data }: TrafficChartProps) => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={displayData}>
+          <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis 
               dataKey="date" 
