@@ -21,8 +21,18 @@ import {
   RefreshCw, 
   Trash2,
   UserCog,
-  Save
+  Save,
+  Globe
 } from "lucide-react";
+
+// Convert country code to flag emoji
+const getFlagEmoji = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
 import { format } from "date-fns";
 import type { UserData } from "./UsersTable";
 import type { PropertyData } from "./PropertiesTable";
@@ -113,6 +123,15 @@ const UserDetailModal = ({
             <div className="space-y-1">
               <Label className="text-muted-foreground">Status</Label>
               <div>{getStatusBadge(user.status)}</div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-muted-foreground flex items-center gap-1">
+                <Globe className="h-3 w-3" /> Country
+              </Label>
+              <p className="font-medium flex items-center gap-1.5">
+                <span>{getFlagEmoji(user.country_code)}</span>
+                {user.country}
+              </p>
             </div>
             <div className="space-y-1">
               <Label className="text-muted-foreground flex items-center gap-1">
