@@ -1,10 +1,26 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, LogIn } from "lucide-react";
 
 const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-accent/5 py-24 md:py-32">
-      <div className="container mx-auto px-4">
+      {/* Header Navigation */}
+      <header className="absolute top-0 left-0 right-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold">ZenReports</span>
+          </div>
+          <Link to="/auth">
+            <Button variant="outline" size="sm" className="gap-2">
+              <LogIn className="h-4 w-4" />
+              Sign In
+            </Button>
+          </Link>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 pt-8">
         <div className="mx-auto max-w-4xl text-center space-y-8 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -22,9 +38,11 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-            <Button size="lg" className="text-lg px-8 hover-scale">
-              Connect GA4
-            </Button>
+            <Link to="/auth">
+              <Button size="lg" className="text-lg px-8 hover-scale">
+                Connect GA4
+              </Button>
+            </Link>
           </div>
           
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
