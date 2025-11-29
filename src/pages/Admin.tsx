@@ -19,14 +19,14 @@ import {
 
 // Mock data for UI reference
 const initialMockUsers: UserData[] = [
-  { id: "1", email: "maria@blueberrybakery.com", full_name: "Maria Fernandes", status: "active", created_at: "2024-08-15T10:30:00Z", last_login: "2025-01-28T14:22:00Z", properties_count: 3, notes: "VIP customer, handles multiple locations" },
-  { id: "2", email: "trevor@pawsandshine.com", full_name: "Trevor Miles", status: "active", created_at: "2024-09-22T08:15:00Z", last_login: "2025-01-27T09:45:00Z", properties_count: 2, notes: "" },
-  { id: "3", email: "aditi@restoreplus.ca", full_name: "Dr. Aditi Mehra", status: "suspended", created_at: "2024-06-10T16:00:00Z", last_login: "2025-01-10T11:30:00Z", properties_count: 1, notes: "Account suspended due to billing issues" },
-  { id: "4", email: "james@techflow.io", full_name: "James Chen", status: "active", created_at: "2024-11-05T12:00:00Z", last_login: "2025-01-28T08:00:00Z", properties_count: 5, notes: "Enterprise client" },
-  { id: "5", email: "sarah@greenleaf.org", full_name: "Sarah Thompson", status: "active", created_at: "2024-12-01T09:30:00Z", last_login: "2025-01-26T16:15:00Z", properties_count: 1, notes: "" },
-  { id: "6", email: "michael@urbanfitness.com", full_name: "Michael Rodriguez", status: "deleted", created_at: "2024-07-20T14:45:00Z", last_login: "2024-12-15T10:00:00Z", properties_count: 0, notes: "Requested account deletion" },
-  { id: "7", email: "emma@artisancoffee.co", full_name: "Emma Wilson", status: "active", created_at: "2025-01-02T11:00:00Z", last_login: "2025-01-28T07:30:00Z", properties_count: 2, notes: "New premium subscriber" },
-  { id: "8", email: "david@nordicspa.se", full_name: "David Lindqvist", status: "active", created_at: "2024-10-18T13:20:00Z", last_login: "2025-01-25T12:45:00Z", properties_count: 4, notes: "" },
+  { id: "1", email: "maria@blueberrybakery.com", full_name: "Maria Fernandes", status: "active", created_at: "2024-08-15T10:30:00Z", last_login: "2025-01-28T14:22:00Z", properties_count: 3, notes: "VIP customer, handles multiple locations", country: "United States", country_code: "US" },
+  { id: "2", email: "trevor@pawsandshine.com", full_name: "Trevor Miles", status: "active", created_at: "2024-09-22T08:15:00Z", last_login: "2025-01-27T09:45:00Z", properties_count: 2, notes: "", country: "United Kingdom", country_code: "GB" },
+  { id: "3", email: "aditi@restoreplus.ca", full_name: "Dr. Aditi Mehra", status: "suspended", created_at: "2024-06-10T16:00:00Z", last_login: "2025-01-10T11:30:00Z", properties_count: 1, notes: "Account suspended due to billing issues", country: "Canada", country_code: "CA" },
+  { id: "4", email: "james@techflow.io", full_name: "James Chen", status: "active", created_at: "2024-11-05T12:00:00Z", last_login: "2025-01-28T08:00:00Z", properties_count: 5, notes: "Enterprise client", country: "Singapore", country_code: "SG" },
+  { id: "5", email: "sarah@greenleaf.org", full_name: "Sarah Thompson", status: "active", created_at: "2024-12-01T09:30:00Z", last_login: "2025-01-26T16:15:00Z", properties_count: 1, notes: "", country: "Australia", country_code: "AU" },
+  { id: "6", email: "michael@urbanfitness.com", full_name: "Michael Rodriguez", status: "deleted", created_at: "2024-07-20T14:45:00Z", last_login: "2024-12-15T10:00:00Z", properties_count: 0, notes: "Requested account deletion", country: "Mexico", country_code: "MX" },
+  { id: "7", email: "emma@artisancoffee.co", full_name: "Emma Wilson", status: "active", created_at: "2025-01-02T11:00:00Z", last_login: "2025-01-28T07:30:00Z", properties_count: 2, notes: "New premium subscriber", country: "Germany", country_code: "DE" },
+  { id: "8", email: "david@nordicspa.se", full_name: "David Lindqvist", status: "active", created_at: "2024-10-18T13:20:00Z", last_login: "2025-01-25T12:45:00Z", properties_count: 4, notes: "", country: "Sweden", country_code: "SE" },
 ];
 
 const initialMockProperties: PropertyData[] = [

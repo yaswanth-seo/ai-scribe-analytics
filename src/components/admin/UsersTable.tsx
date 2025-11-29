@@ -45,7 +45,18 @@ export interface UserData {
   last_login: string | null;
   properties_count: number;
   notes?: string | null;
+  country: string;
+  country_code: string;
 }
+
+// Convert country code to flag emoji
+const getFlagEmoji = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
 
 interface UsersTableProps {
   users: UserData[];
@@ -123,6 +134,7 @@ const UsersTable = ({
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
+              <TableHead className="hidden sm:table-cell">Country</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Properties</TableHead>
               <TableHead className="hidden lg:table-cell">Last Login</TableHead>
@@ -133,7 +145,7 @@ const UsersTable = ({
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No users found
                 </TableCell>
               </TableRow>
@@ -147,6 +159,12 @@ const UsersTable = ({
                         <p className="text-sm text-muted-foreground">{user.full_name}</p>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-base">{getFlagEmoji(user.country_code)}</span>
+                      <span className="text-muted-foreground">{user.country}</span>
+                    </span>
                   </TableCell>
                   <TableCell>{getStatusBadge(user.status)}</TableCell>
                   <TableCell className="hidden md:table-cell">
