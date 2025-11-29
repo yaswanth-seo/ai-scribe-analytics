@@ -1,14 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminStats from "@/components/admin/AdminStats";
 import UsersTable, { type UserData } from "@/components/admin/UsersTable";
 import PropertiesTable, { type PropertyData } from "@/components/admin/PropertiesTable";
 import UserDetailModal from "@/components/admin/UserDetailModal";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,90 +17,40 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Mock data for UI reference
+const initialMockUsers: UserData[] = [
+  { id: "1", email: "maria@blueberrybakery.com", full_name: "Maria Fernandes", status: "active", created_at: "2024-08-15T10:30:00Z", last_login: "2025-01-28T14:22:00Z", properties_count: 3, notes: "VIP customer, handles multiple locations" },
+  { id: "2", email: "trevor@pawsandshine.com", full_name: "Trevor Miles", status: "active", created_at: "2024-09-22T08:15:00Z", last_login: "2025-01-27T09:45:00Z", properties_count: 2, notes: "" },
+  { id: "3", email: "aditi@restoreplus.ca", full_name: "Dr. Aditi Mehra", status: "suspended", created_at: "2024-06-10T16:00:00Z", last_login: "2025-01-10T11:30:00Z", properties_count: 1, notes: "Account suspended due to billing issues" },
+  { id: "4", email: "james@techflow.io", full_name: "James Chen", status: "active", created_at: "2024-11-05T12:00:00Z", last_login: "2025-01-28T08:00:00Z", properties_count: 5, notes: "Enterprise client" },
+  { id: "5", email: "sarah@greenleaf.org", full_name: "Sarah Thompson", status: "active", created_at: "2024-12-01T09:30:00Z", last_login: "2025-01-26T16:15:00Z", properties_count: 1, notes: "" },
+  { id: "6", email: "michael@urbanfitness.com", full_name: "Michael Rodriguez", status: "deleted", created_at: "2024-07-20T14:45:00Z", last_login: "2024-12-15T10:00:00Z", properties_count: 0, notes: "Requested account deletion" },
+  { id: "7", email: "emma@artisancoffee.co", full_name: "Emma Wilson", status: "active", created_at: "2025-01-02T11:00:00Z", last_login: "2025-01-28T07:30:00Z", properties_count: 2, notes: "New premium subscriber" },
+  { id: "8", email: "david@nordicspa.se", full_name: "David Lindqvist", status: "active", created_at: "2024-10-18T13:20:00Z", last_login: "2025-01-25T12:45:00Z", properties_count: 4, notes: "" },
+];
+
+const initialMockProperties: PropertyData[] = [
+  { id: "p1", ga4_property_id: "GA4-123456789", property_name: "Blueberry Bakery Main", domain: "blueberrybakery.com", is_active: true, connected_at: "2024-08-15T10:35:00Z", disconnected_at: null, user_id: "1", user_email: "maria@blueberrybakery.com", user_name: "Maria Fernandes" },
+  { id: "p2", ga4_property_id: "GA4-234567890", property_name: "Blueberry Bakery Blog", domain: "blog.blueberrybakery.com", is_active: true, connected_at: "2024-08-20T09:00:00Z", disconnected_at: null, user_id: "1", user_email: "maria@blueberrybakery.com", user_name: "Maria Fernandes" },
+  { id: "p3", ga4_property_id: "GA4-345678901", property_name: "Blueberry Shop", domain: "shop.blueberrybakery.com", is_active: true, connected_at: "2024-09-01T11:15:00Z", disconnected_at: null, user_id: "1", user_email: "maria@blueberrybakery.com", user_name: "Maria Fernandes" },
+  { id: "p4", ga4_property_id: "GA4-456789012", property_name: "Paws & Shine", domain: "pawsandshine.com", is_active: true, connected_at: "2024-09-22T08:20:00Z", disconnected_at: null, user_id: "2", user_email: "trevor@pawsandshine.com", user_name: "Trevor Miles" },
+  { id: "p5", ga4_property_id: "GA4-567890123", property_name: "Paws Store", domain: "store.pawsandshine.com", is_active: false, connected_at: "2024-10-05T14:30:00Z", disconnected_at: "2025-01-15T10:00:00Z", user_id: "2", user_email: "trevor@pawsandshine.com", user_name: "Trevor Miles" },
+  { id: "p6", ga4_property_id: "GA4-678901234", property_name: "RestorePlus Clinic", domain: "restoreplus.ca", is_active: false, connected_at: "2024-06-10T16:05:00Z", disconnected_at: "2025-01-10T11:35:00Z", user_id: "3", user_email: "aditi@restoreplus.ca", user_name: "Dr. Aditi Mehra" },
+  { id: "p7", ga4_property_id: "GA4-789012345", property_name: "TechFlow Main", domain: "techflow.io", is_active: true, connected_at: "2024-11-05T12:10:00Z", disconnected_at: null, user_id: "4", user_email: "james@techflow.io", user_name: "James Chen" },
+  { id: "p8", ga4_property_id: "GA4-890123456", property_name: "TechFlow Docs", domain: "docs.techflow.io", is_active: true, connected_at: "2024-11-10T09:00:00Z", disconnected_at: null, user_id: "4", user_email: "james@techflow.io", user_name: "James Chen" },
+  { id: "p9", ga4_property_id: "GA4-901234567", property_name: "GreenLeaf Foundation", domain: "greenleaf.org", is_active: true, connected_at: "2024-12-01T09:35:00Z", disconnected_at: null, user_id: "5", user_email: "sarah@greenleaf.org", user_name: "Sarah Thompson" },
+  { id: "p10", ga4_property_id: "GA4-012345678", property_name: "Artisan Coffee", domain: "artisancoffee.co", is_active: true, connected_at: "2025-01-02T11:10:00Z", disconnected_at: null, user_id: "7", user_email: "emma@artisancoffee.co", user_name: "Emma Wilson" },
+];
+
 const Admin = () => {
   const navigate = useNavigate();
-  const { user, isLoading: authLoading, isAdmin } = useAuth();
   
   const [activeTab, setActiveTab] = useState("overview");
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [properties, setProperties] = useState<PropertyData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState<UserData[]>(initialMockUsers);
+  const [properties, setProperties] = useState<PropertyData[]>(initialMockProperties);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth");
-      return;
-    }
-    
-    if (!authLoading && user && !isAdmin) {
-      toast.error("Access denied. Admin privileges required.");
-      navigate("/dashboard");
-      return;
-    }
-    
-    if (user && isAdmin) {
-      fetchData();
-    }
-  }, [user, authLoading, isAdmin, navigate]);
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      // Fetch users with property count
-      const { data: profilesData, error: profilesError } = await supabase
-        .from("profiles")
-        .select("*");
-
-      if (profilesError) throw profilesError;
-
-      // Fetch all properties
-      const { data: propertiesData, error: propertiesError } = await supabase
-        .from("analytics_properties")
-        .select("*");
-
-      if (propertiesError) throw propertiesError;
-
-      // Map users with property counts
-      const usersWithCounts: UserData[] = (profilesData || []).map((profile) => ({
-        id: profile.id,
-        email: profile.email,
-        full_name: profile.full_name,
-        status: profile.status as "active" | "suspended" | "deleted",
-        created_at: profile.created_at,
-        last_login: profile.last_login,
-        properties_count: (propertiesData || []).filter((p) => p.user_id === profile.id).length,
-        notes: profile.notes,
-      }));
-
-      // Map properties with user info
-      const propertiesWithUsers: PropertyData[] = (propertiesData || []).map((property) => {
-        const propertyUser = profilesData?.find((p) => p.id === property.user_id);
-        return {
-          id: property.id,
-          ga4_property_id: property.ga4_property_id,
-          property_name: property.property_name,
-          domain: property.domain,
-          is_active: property.is_active,
-          connected_at: property.connected_at,
-          disconnected_at: property.disconnected_at,
-          user_id: property.user_id,
-          user_email: propertyUser?.email || "Unknown",
-          user_name: propertyUser?.full_name,
-        };
-      });
-
-      setUsers(usersWithCounts);
-      setProperties(propertiesWithUsers);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to load data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const stats = {
     totalUsers: users.length,
@@ -129,120 +76,48 @@ const Admin = () => {
     navigate(`/dashboard?${params.toString()}`);
   };
 
-  const handleSuspend = async (userData: UserData) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ status: "suspended" })
-        .eq("id", userData.id);
-
-      if (error) throw error;
-
-      toast.success(`User ${userData.email} has been suspended`);
-      fetchData();
-      setShowUserModal(false);
-    } catch (error) {
-      console.error("Error suspending user:", error);
-      toast.error("Failed to suspend user");
-    }
+  const handleSuspend = (userData: UserData) => {
+    setUsers(users.map(u => u.id === userData.id ? { ...u, status: "suspended" as const } : u));
+    toast.success(`User ${userData.email} has been suspended`);
+    setShowUserModal(false);
   };
 
-  const handleReactivate = async (userData: UserData) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ status: "active" })
-        .eq("id", userData.id);
-
-      if (error) throw error;
-
-      toast.success(`User ${userData.email} has been reactivated`);
-      fetchData();
-      setShowUserModal(false);
-    } catch (error) {
-      console.error("Error reactivating user:", error);
-      toast.error("Failed to reactivate user");
-    }
+  const handleReactivate = (userData: UserData) => {
+    setUsers(users.map(u => u.id === userData.id ? { ...u, status: "active" as const } : u));
+    toast.success(`User ${userData.email} has been reactivated`);
+    setShowUserModal(false);
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!deleteConfirm) return;
     
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ status: "deleted" })
-        .eq("id", deleteConfirm.id);
-
-      if (error) throw error;
-
-      toast.success(`User ${deleteConfirm.email} has been deleted`);
-      setDeleteConfirm(null);
-      setShowUserModal(false);
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("Failed to delete user");
-    }
+    setUsers(users.map(u => u.id === deleteConfirm.id ? { ...u, status: "deleted" as const } : u));
+    toast.success(`User ${deleteConfirm.email} has been deleted`);
+    setDeleteConfirm(null);
+    setShowUserModal(false);
   };
 
-  const handleSaveNotes = async (userId: string, notes: string) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ notes })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      toast.success("Notes saved");
-      fetchData();
-    } catch (error) {
-      console.error("Error saving notes:", error);
-      toast.error("Failed to save notes");
-    }
+  const handleSaveNotes = (userId: string, notes: string) => {
+    setUsers(users.map(u => u.id === userId ? { ...u, notes } : u));
+    toast.success("Notes saved");
   };
 
-  const handleDisconnectProperty = async (property: PropertyData) => {
-    try {
-      const { error } = await supabase
-        .from("analytics_properties")
-        .update({ 
-          is_active: false, 
-          disconnected_at: new Date().toISOString(),
-          disconnected_by: user?.id 
-        })
-        .eq("id", property.id);
-
-      if (error) throw error;
-
-      toast.success(`Property ${property.domain} disconnected`);
-      fetchData();
-    } catch (error) {
-      console.error("Error disconnecting property:", error);
-      toast.error("Failed to disconnect property");
-    }
+  const handleDisconnectProperty = (property: PropertyData) => {
+    setProperties(properties.map(p => 
+      p.id === property.id 
+        ? { ...p, is_active: false, disconnected_at: new Date().toISOString() } 
+        : p
+    ));
+    toast.success(`Property ${property.domain} disconnected`);
   };
 
-  const handleReconnectProperty = async (property: PropertyData) => {
-    try {
-      const { error } = await supabase
-        .from("analytics_properties")
-        .update({ 
-          is_active: true, 
-          disconnected_at: null,
-          disconnected_by: null 
-        })
-        .eq("id", property.id);
-
-      if (error) throw error;
-
-      toast.success(`Property ${property.domain} reconnected`);
-      fetchData();
-    } catch (error) {
-      console.error("Error reconnecting property:", error);
-      toast.error("Failed to reconnect property");
-    }
+  const handleReconnectProperty = (property: PropertyData) => {
+    setProperties(properties.map(p => 
+      p.id === property.id 
+        ? { ...p, is_active: true, disconnected_at: null } 
+        : p
+    ));
+    toast.success(`Property ${property.domain} reconnected`);
   };
 
   const handleViewUserFromProperty = (userId: string) => {
@@ -251,14 +126,6 @@ const Admin = () => {
       handleViewUser(userData);
     }
   };
-
-  if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
